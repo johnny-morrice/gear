@@ -29,13 +29,14 @@ import (
 // chatCmd represents the chat command
 var chatCmd = &cobra.Command{
 	Use:   "chat",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+	Short: "Interactive chat",
+	Long: `Launch an interactive chat session.  Examples:
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	$ gear chat
+
+	$ gear chat --remote teoma.io
+
+	$ gear chat --remote teoma.io --me john@functorama.com --them gleech@teoma.io`,
 	Run: func(cmd *cobra.Command, args []string) {
 		// TODO: Work your own magic here
 		fmt.Println("chat called")
