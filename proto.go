@@ -9,6 +9,7 @@ import (
 type Cmd string
 
 const (
+        Admin = Cmd("admin")
         Whitelist = Cmd("whitelist")
         Unwhitelist = Cmd("unwhitelist")
         Register = Cmd("register")
