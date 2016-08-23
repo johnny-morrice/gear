@@ -86,9 +86,9 @@ func (s *server) loop() error {
 
 func (s *server) handle(input *Proto) (*Proto, error) {
         switch input.Cmd {
-        case Download:
+        case Recv:
                 return s.send(input)
-        case Upload:
+        case Send:
                 return s.recv(input)
         default:
                 return nil, errors.New("Unknown  Proto command")

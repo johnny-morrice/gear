@@ -13,10 +13,10 @@ type remote struct {
         client *http.Client
 }
 
-func (rem *remote) upload(r io.Reader, me, them *openpgp.Entity) error {
+func (rem *remote) send(r io.Reader, me, them *openpgp.Entity) error {
         return nil
 }
 
-func (rem *remote) download(w io.Writer, me *openpgp.Entity) error {
+func (rem *remote) recv(w io.Writer, me *openpgp.Entity) error {
         return nil
 }

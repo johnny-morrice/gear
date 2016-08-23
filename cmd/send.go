@@ -26,30 +26,30 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// uploadCmd represents the upload command
-var uploadCmd = &cobra.Command{
-	Use:   "upload",
-	Short: "Upload message to remote server",
-	Long: `Upload message to remote server.  Example:
+// SendCmd represents the Send command
+var SendCmd = &cobra.Command{
+	Use:   "send",
+	Short: "Send message to remote server",
+	Long: `Send message to remote server.  Example:
 
-	$ echo 'Hi, Gavin!' | gear upload --me john@functorama.com --them gleech@teoma.io`,
+	$ echo 'Hi, Gavin!' | gear send --from john@functorama.com --to gleech@teoma.io`,
 	Run: func(cmd *cobra.Command, args []string) {
 		// TODO: Work your own magic here
-		fmt.Println("upload called")
+		fmt.Println("Send called")
 	},
 }
 
 func init() {
-	RootCmd.AddCommand(uploadCmd)
+	RootCmd.AddCommand(SendCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// uploadCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// SendCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// uploadCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// SendCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 
 }

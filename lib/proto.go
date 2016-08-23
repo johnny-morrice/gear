@@ -3,9 +3,8 @@ package lib
 type Cmd string
 
 const (
-        Download = Cmd("download")
-        Upload = Cmd("upload")
-        Data = Cmd("data")
+        Send = Cmd("send")
+        Recv = Cmd("recv")
         Err = Cmd("error")
 )
 

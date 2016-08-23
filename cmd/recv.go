@@ -26,33 +26,33 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// downloadCmd represents the download command
-var downloadCmd = &cobra.Command{
-	Use:   "download",
-	Short: "Download message from gear server",
-	Long: `Download and print next waiting message from gear server.
+// RecvCmd represents the Recv command
+var RecvCmd = &cobra.Command{
+	Use:   "recv",
+	Short: "Receive message from gear server",
+	Long: `Receive and print next waiting message from gear server.
 	Examples:
 
-	$ gear download --remote teoma.io --me john@functorama.com
+	$ gear recv --remote teoma.io --to john@functorama.com
 	Message from gleech@teoma.io:
 	Hi, John!`,
 	Run: func(cmd *cobra.Command, args []string) {
 		// TODO: Work your own magic here
-		fmt.Println("download called")
+		fmt.Println("Recv called")
 	},
 }
 
 func init() {
-	RootCmd.AddCommand(downloadCmd)
+	RootCmd.AddCommand(RecvCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// downloadCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// RecvCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// downloadCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// RecvCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 
 }
