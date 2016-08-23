@@ -21,16 +21,10 @@ type ctrl struct {
         reply chan<- *Proto
 }
 
-type message struct {
-        from *openpgp.Entity
-        to *openpgp.Entity
-        data []byte
-}
-
 type server struct {
         ents []*openpgp.Entity
 
-        msgs []*message
+        msgs []*Proto
 
         stream chan ctrl
 }
