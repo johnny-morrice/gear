@@ -21,9 +21,10 @@
 package cmd
 
 import (
-	"fmt"
-
+	"net"
+	
 	"github.com/spf13/cobra"
+	"github.com/johnny-morrice/gear/lib"
 )
 
 // serveCmd represents the serve command
@@ -32,24 +33,34 @@ var serveCmd = &cobra.Command{
 	Short: "Run gear server",
 	Long: `Run gear server until terminated.  Example:
 
-	$ gear serve --bind 10.0.1.1 --port 6666 --admin john@functorama.com`,
+	$ gear serve --bind 10.0.1.1 --port 7777`,
 	Run: func(cmd *cobra.Command, args []string) {
-		// TODO: Work your own magic here
-		fmt.Println("serve called")
+		flags := cmd.Flags()
+
+		bind, binderr := flags.GetIP("bind")
+		port, porterr := flags.GetUint("port")
+
+		err := binderr
+		if err == nil {
+			err = porterr
+		}
+
+		if err != nil {
+			die(err)
+		}
+
+		err = lib.Serve(bind, port)
+
+		if err != nil {
+			die(err)
+		}
 	},
 }
 
 func init() {
 	RootCmd.AddCommand(serveCmd)
 
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// serveCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// serveCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-
+	flags := serveCmd.PersistentFlags()
+	flags.IP("bind", net.IP("127.0.0.1"), "Bind interface")
+	flags.Uint("port", 6666, "Server port")
 }

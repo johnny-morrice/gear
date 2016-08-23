@@ -1,4 +1,4 @@
-package main
+package lib
 
 import (
         "errors"
@@ -6,6 +6,10 @@ import (
 
         "golang.org/x/crypto/openpgp"
 )
+
+func Serve(ip []byte, port uint) error {
+        return nil
+}
 
 type ctrl struct {
         pkt *Proto
