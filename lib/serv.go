@@ -8,7 +8,12 @@ import (
 )
 
 func Serve(ip []byte, port uint) error {
-        return nil
+        s := &server{}
+        s.stream = make(chan ctrl)
+
+        http.Handle("/", s)
+
+        return s.loop()
 }
 
 type ctrl struct {
@@ -23,18 +28,18 @@ type message struct {
 }
 
 type server struct {
-        whitelist []string
-
         ents []*openpgp.Entity
 
         msgs []*message
+
+        stream chan ctrl
 }
 
 func (s *server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
-func (s *server) loop(stream <-chan ctrl) error {
-        for input := range stream {
+func (s *server) loop() error {
+        for input := range s.stream {
                 out, err := s.handle(input.pkt)
 
                 if err != nil {
