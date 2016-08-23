@@ -3,8 +3,6 @@ package lib
 import (
         "errors"
         "net/http"
-
-        "golang.org/x/crypto/openpgp"
 )
 
 func Serve(ip []byte, port uint) error {
@@ -22,9 +20,7 @@ type ctrl struct {
 }
 
 type server struct {
-        ents []*openpgp.Entity
-
-        msgs []*Proto
+        msgs map[peeraddr]*Proto
 
         stream chan ctrl
 }

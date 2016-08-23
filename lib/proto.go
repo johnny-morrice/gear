@@ -15,6 +15,8 @@ const (
         Err = Cmd("error")
 )
 
+type peeraddr string
+
 type Proto struct {
         Cmd Cmd
         From *openpgp.Entity
