@@ -1,36 +1,78 @@
 package lib
 
 import (
-        "errors"
+        "fmt"
         "net/http"
+
+        "github.com/pkg/errors"
+        "github.com/gorilla/mux"
 )
 
-func Serve(ip []byte, port uint) error {
+func Serve(ip []byte, port uint, auth Auth) error {
         s := &server{}
-        s.stream = make(chan ctrl)
+        s.stream = make(chan ctrl, 1)
+        s.auth = auth
 
-        http.Handle("/", s)
+        r := mux.NewRouter()
 
-        return s.loop()
+        r.HandleFunc("/{to}", s.out).Methods("GET")
+        r.HandleFunc("/{to}/{from}", s.in).Methods("POST")
+
+        errch := s.control()
+
+        // TODO IP bytes serialize correctly to string in all cases?
+        at := fmt.Sprintf("%v:%v", ip, port)
+        http.ListenAndServe(at, r)
+
+        s.stream<- ctrl {done: true,}
+        err := <-errch
+
+        if err != nil {
+                return errors.Wrap(err, "Ctrl loop failed")
+        }
+
+        return nil
 }
 
 type ctrl struct {
+        done bool
         pkt *Proto
         reply chan<- *Proto
 }
 
 type server struct {
-        msgs map[peeraddr]*Proto
+        auth Auth
+
+        msgs map[PeerAddr]Message
 
         stream chan ctrl
 }
 
-func (s *server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (s *server) in(w http.ResponseWriter, r *http.Request) {
+}
+
+func (s *server) out(w http.ResponseWriter, r *http.Request) {
+}
+
+func (s *server) control() <-chan error {
+        errch := make(chan error)
+
+        go func() {
+                err := s.loop()
+                errch<- err
+        }()
+
+        return errch
 }
 
 func (s *server) loop() error {
         for input := range s.stream {
                 out, err := s.handle(input.pkt)
+
+                // Signal close
+                if out == nil {
+                        return nil
+                }
 
                 if err != nil {
                         return err

@@ -1,11 +1,5 @@
 package lib
 
-import (
-        "io"
-
-        "golang.org/x/crypto/openpgp"
-)
-
 type Cmd string
 
 const (
@@ -15,11 +9,15 @@ const (
         Err = Cmd("error")
 )
 
-type peeraddr string
+type PeerAddr string
+
+type Message struct {
+        From PeerAddr
+        To PeerAddr
+        Data []byte
+}
 
 type Proto struct {
+        Message
         Cmd Cmd
-        From *openpgp.Entity
-        To *openpgp.Entity
-        Data io.Reader
 }

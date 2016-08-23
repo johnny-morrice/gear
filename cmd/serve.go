@@ -22,7 +22,7 @@ package cmd
 
 import (
 	"net"
-	
+
 	"github.com/spf13/cobra"
 	"github.com/johnny-morrice/gear/lib"
 )
@@ -49,7 +49,7 @@ var serveCmd = &cobra.Command{
 			die(err)
 		}
 
-		err = lib.Serve(bind, port)
+		err = lib.Serve(bind, port, nil)
 
 		if err != nil {
 			die(err)
