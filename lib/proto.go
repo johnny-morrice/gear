@@ -5,6 +5,7 @@ type Cmd string
 const (
         Send = Cmd("send")
         Recv = Cmd("recv")
+        Data = Cmd("data")
         Err = Cmd("error")
 )
 

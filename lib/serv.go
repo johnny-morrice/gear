@@ -9,16 +9,21 @@ import (
 )
 
 func Serve(ip []byte, port uint, auth Auth) error {
+        ctrlstream := make(chan ctrl, 1)
+        m := &model{}
+
         s := &server{}
-        s.stream = make(chan ctrl, 1)
-        s.auth = auth
+        s.stream = ctrlstream
+
+        m.auth = auth
+        m.stream = ctrlstream
 
         r := mux.NewRouter()
 
-        r.HandleFunc("/{to}", s.out).Methods("GET")
-        r.HandleFunc("/{to}/{from}", s.in).Methods("POST")
+        r.HandleFunc("/{to}", s.recv).Methods("GET")
+        r.HandleFunc("/{to}/{from}", s.send).Methods("POST")
 
-        errch := s.control()
+        errch := m.spawn()
 
         // TODO IP bytes serialize correctly to string in all cases?
         at := fmt.Sprintf("%v:%v", ip, port)
@@ -41,33 +46,35 @@ type ctrl struct {
 }
 
 type server struct {
+        stream chan<- ctrl
+}
+
+func (s *server) send(w http.ResponseWriter, r *http.Request) {
+}
+
+func (s *server) recv(w http.ResponseWriter, r *http.Request) {
+}
+
+type model struct {
         auth Auth
-
         msgs map[PeerAddr]Message
-
-        stream chan ctrl
+        stream <-chan ctrl
 }
 
-func (s *server) in(w http.ResponseWriter, r *http.Request) {
-}
-
-func (s *server) out(w http.ResponseWriter, r *http.Request) {
-}
-
-func (s *server) control() <-chan error {
+func (m *model) spawn() <-chan error {
         errch := make(chan error)
 
         go func() {
-                err := s.loop()
+                err := m.loop()
                 errch<- err
         }()
 
         return errch
 }
 
-func (s *server) loop() error {
-        for input := range s.stream {
-                out, err := s.handle(input.pkt)
+func (m *model) loop() error {
+        for input := range m.stream {
+                out, err := m.handle(input.pkt)
 
                 // Signal close
                 if out == nil {
@@ -84,21 +91,21 @@ func (s *server) loop() error {
         return nil
 }
 
-func (s *server) handle(input *Proto) (*Proto, error) {
+func (m *model) handle(input *Proto) (*Proto, error) {
         switch input.Cmd {
         case Recv:
-                return s.send(input)
+                return m.send(input)
         case Send:
-                return s.recv(input)
+                return m.recv(input)
         default:
-                return nil, errors.New("Unknown  Proto command")
+                return nil, fmt.Errorf("Not handling Proto command: %v", input.Cmd)
         }
 }
 
-func (s *server) send(input *Proto) (*Proto, error) {
+func (m *model) send(input *Proto) (*Proto, error) {
         return nil, nil
 }
 
-func (s *server) recv(input *Proto) (*Proto, error) {
+func (m *model) recv(input *Proto) (*Proto, error) {
         return nil, nil
 }
