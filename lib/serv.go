@@ -10,11 +10,11 @@ import (
 
 func Serve(ip []byte, port uint, auth Auth) error {
         ctrlstream := make(chan ctrl, 1)
-        m := &model{}
 
         s := &server{}
         s.stream = ctrlstream
 
+        m := &model{}
         m.auth = auth
         m.stream = ctrlstream
 
