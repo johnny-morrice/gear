@@ -33,10 +33,7 @@ func Serve(ip net.IP, port uint, auth Auth) error {
 
         fmt.Fprintf(os.Stderr, "Server stopped: %v", serr)
 
-        closer := ctrl{}
-        closer.pkt.Cmd = Close
-
-        s.stream<- closer
+        close(s.stream)
         err := <-errch
 
         if err != nil {
@@ -86,11 +83,6 @@ func (m *model) loop() error {
                         return err
                 }
 
-                // Signal close
-                if out == nil {
-                        return nil
-                }
-
                 input.reply<- out
         }
 
@@ -103,8 +95,6 @@ func (m *model) handle(input *Proto) (*Proto, error) {
                 return m.send(input)
         case Send:
                 return m.recv(input)
-        case Close:
-                return nil, nil
         default:
                 return nil, fmt.Errorf("Not handling Proto command: %v", input.Cmd)
         }

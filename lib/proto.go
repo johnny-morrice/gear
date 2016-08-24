@@ -6,7 +6,6 @@ const (
         Send = Cmd("send")
         Recv = Cmd("recv")
         Data = Cmd("data")
-        Close = Cmd("close")
         Err = Cmd("error")
 )
 
