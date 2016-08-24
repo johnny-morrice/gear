@@ -2,13 +2,15 @@ package lib
 
 import (
         "fmt"
+        "net"
         "net/http"
+        "os"
 
         "github.com/pkg/errors"
         "github.com/gorilla/mux"
 )
 
-func Serve(ip []byte, port uint, auth Auth) error {
+func Serve(ip net.IP, port uint, auth Auth) error {
         ctrlstream := make(chan ctrl, 1)
 
         s := &server{}
@@ -26,10 +28,15 @@ func Serve(ip []byte, port uint, auth Auth) error {
         errch := m.spawn()
 
         // TODO IP bytes serialize correctly to string in all cases?
-        at := fmt.Sprintf("%v:%v", ip, port)
-        http.ListenAndServe(at, r)
+        at := fmt.Sprintf("%v:%v", ip.String(), port)
+        serr := http.ListenAndServe(at, r)
 
-        s.stream<- ctrl {done: true,}
+        fmt.Fprintf(os.Stderr, "Server stopped: %v", serr)
+
+        closer := ctrl{}
+        closer.pkt.Cmd = Close
+
+        s.stream<- closer
         err := <-errch
 
         if err != nil {
@@ -40,8 +47,7 @@ func Serve(ip []byte, port uint, auth Auth) error {
 }
 
 type ctrl struct {
-        done bool
-        pkt *Proto
+        pkt Proto
         reply chan<- *Proto
 }
 
@@ -74,15 +80,15 @@ func (m *model) spawn() <-chan error {
 
 func (m *model) loop() error {
         for input := range m.stream {
-                out, err := m.handle(input.pkt)
+                out, err := m.handle(&input.pkt)
+
+                if err != nil {
+                        return err
+                }
 
                 // Signal close
                 if out == nil {
                         return nil
-                }
-
-                if err != nil {
-                        return err
                 }
 
                 input.reply<- out
@@ -97,6 +103,8 @@ func (m *model) handle(input *Proto) (*Proto, error) {
                 return m.send(input)
         case Send:
                 return m.recv(input)
+        case Close:
+                return nil, nil
         default:
                 return nil, fmt.Errorf("Not handling Proto command: %v", input.Cmd)
         }

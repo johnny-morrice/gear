@@ -61,6 +61,6 @@ func init() {
 	RootCmd.AddCommand(serveCmd)
 
 	flags := serveCmd.PersistentFlags()
-	flags.IP("bind", net.IP("127.0.0.1"), "Bind interface")
+	flags.IP("bind", net.IP([]byte{127,0,0,1}), "Bind interface")
 	flags.Uint("port", 6666, "Server port")
 }
