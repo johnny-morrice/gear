@@ -33,7 +33,7 @@ func Serve(ip []byte, port uint, auth Auth) error {
         err := <-errch
 
         if err != nil {
-                return errors.Wrap(err, "Ctrl loop failed")
+                return errors.Wrap(err, "Model loop failed")
         }
 
         return nil
