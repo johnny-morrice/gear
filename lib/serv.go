@@ -10,14 +10,14 @@ import (
         "github.com/gorilla/mux"
 )
 
-func Serve(ip net.IP, port uint, auth Auth) error {
+func Serve(ip net.IP, port uint, crypto Crypto) error {
         ctrlstream := make(chan ctrl, 1)
 
         s := &server{}
         s.stream = ctrlstream
 
         m := &model{}
-        m.auth = auth
+        m.crypto = crypto
         m.stream = ctrlstream
 
         r := mux.NewRouter()
@@ -59,7 +59,7 @@ func (s *server) recv(w http.ResponseWriter, r *http.Request) {
 }
 
 type model struct {
-        auth Auth
+        crypto Crypto
         msgs map[PeerAddr]Message
         stream <-chan ctrl
 }
